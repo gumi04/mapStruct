@@ -33,6 +33,7 @@ import com.example.mapstruddemo.entity.Productos;
 import com.example.mapstruddemo.exceptions.BusinessRuleException;
 import com.example.mapstruddemo.mappers.ProductsMapper;
 import com.example.mapstruddemo.repository.ProductosRepositorio;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,5 +70,10 @@ public class ProductosServiceImpl implements ProductosService {
             .firstPage(data.isFirst())
             .numberOfElements(data.getNumberOfElements())
             .build();
+  }
+
+  @Override
+  public List<ProductosDto> getAllProducts() {
+    return mapper.togetDtosList(repositorio.findAll());
   }
 }

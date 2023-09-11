@@ -30,6 +30,7 @@ package com.example.mapstruddemo.service;
 import com.example.mapstruddemo.dto.PaginationDto;
 import com.example.mapstruddemo.dto.ProductosDto;
 import com.example.mapstruddemo.entity.Productos;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -38,4 +39,6 @@ public interface ProductosService {
   ProductosDto getProducById(Integer id);
 
   PaginationDto pagination(Pageable pageable);
+
+  List<ProductosDto> getAllProducts();
 }

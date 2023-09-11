@@ -28,6 +28,8 @@
 package com.example.mapstruddemo.service;
 
 import com.example.mapstruddemo.dto.FakeDto;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import net.datafaker.Faker;
 import org.springframework.stereotype.Service;
@@ -35,15 +37,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class RandonFakeServiceImpl implements RandoFakeService {
   @Override
-  public FakeDto getDummyData() {
+  public List<FakeDto> getDummyData() {
+    List<FakeDto> data = new ArrayList<>();
     Faker faker = new Faker(Locale.ENGLISH);
-    FakeDto response = new FakeDto();
-    response.setCumpleanos(faker.date());
-    response.setDireccion(faker.address());
-    response.setZodico(faker.zodiac().sign());
-    response.setNegocios(faker.business());
-    response.setFullName(faker.name());
-    System.out.println(response);
-    return null;
+    for (int i = 0; i < 10; i++) {
+      FakeDto dummyData = new FakeDto();
+      dummyData.setStreetAddress(faker.address().streetAddress());
+      dummyData.setZodico(faker.zodiac().sign());
+      dummyData.setFullName(faker.name().fullName());
+      data.add(dummyData);
+    }
+    return data;
   }
 }

@@ -28,8 +28,9 @@
 package com.example.mapstruddemo.service;
 
 import com.example.mapstruddemo.dto.FakeDto;
+import java.util.List;
 
 public interface RandoFakeService {
 
-  FakeDto getDummyData();
+  List<FakeDto> getDummyData();
 }

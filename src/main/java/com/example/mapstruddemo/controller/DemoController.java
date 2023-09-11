@@ -27,23 +27,26 @@
 
 package com.example.mapstruddemo.controller;
 
-import com.example.mapstruddemo.dto.FakeDto;
 import com.example.mapstruddemo.dto.PaginationDto;
 import com.example.mapstruddemo.dto.ProductosDto;
+import com.example.mapstruddemo.service.FileService;
 import com.example.mapstruddemo.service.ProductosService;
-import com.example.mapstruddemo.service.RandoFakeService;
-import lombok.Getter;
+import java.io.ByteArrayInputStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.SortDefault;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -54,15 +57,15 @@ public class DemoController {
   private ProductosService service;
 
   @Autowired
-  private RandoFakeService randoFakeService;
+  private FileService fileService;
 
   @GetMapping(value = "/producto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<ProductosDto> getProductoById(@PathVariable("id") Integer id){
+  public ResponseEntity<ProductosDto> getProductoById(@PathVariable("id") Integer id) {
     return ResponseEntity.ok(service.getProducById(id));
   }
 
   @GetMapping(value = "/producto", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<PaginationDto> getProductoById(@PageableDefault(size = 10, page = 0, sort = {"id", }, direction = Sort.Direction.DESC) Pageable pageable){
+  public ResponseEntity<PaginationDto> getProductoById(@PageableDefault(size = 10, page = 0, sort = {"id",}, direction = Sort.Direction.DESC) Pageable pageable) {
     return ResponseEntity.ok(service.pagination(pageable));
   }
 
@@ -75,8 +78,24 @@ public class DemoController {
 //    return ResponseEntity.ok(service.pagination(pageable));
 //  }
 
-  @GetMapping(value = "/fake", produces = MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<FakeDto> getFakeData(){
-    return ResponseEntity.ok(randoFakeService.getDummyData());
+  @GetMapping(value = "/csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+  public ResponseEntity<byte[]> getFakeData() {
+    return ResponseEntity
+            .ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=archivo-test.csv")
+            .contentType(MediaType.parseMediaType("application/octet-stream"))
+            .cacheControl(CacheControl.noCache())
+            .body(fileService.createCsv());
+  }
+
+  @GetMapping(value = "/excel", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+  public ResponseEntity<InputStreamResource> getFakeDataExcel() {
+
+    return ResponseEntity
+            .ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=archivo.xlsx")
+            .contentType(MediaType.parseMediaType("application/octet-stream"))
+            .cacheControl(CacheControl.noCache())
+            .body(new InputStreamResource(fileService.createExcel()));
   }
 }

@@ -41,9 +41,9 @@ uses = {CategoriaMapper.class})
 public interface ProductsMapper {
 
   @Mappings({
-          @Mapping(source = "id", target = "id", numberFormat = "$#.00"),
+          @Mapping(source = "id", target = "id"),
           @Mapping(source = "name", target = "nombre"),
-          @Mapping(source = "date", target = "fecha")
+          @Mapping(source = "date", target = "fecha", dateFormat = "yyyy-MM-dd")
   })
   ProductosDto toDto(Productos entity);
 

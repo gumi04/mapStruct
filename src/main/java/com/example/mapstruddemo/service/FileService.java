@@ -20,26 +20,21 @@
  * any other work released this way by its authors.  You can apply it to
  * your programs, too.
  *
- * Nombre de archivo: fake
+ * Nombre de archivo: FileService
  * Autor: 319207
- * Fecha de creación: septiembre 08, 2023
+ * Fecha de creación: septiembre 11, 2023
  */
 
-package com.example.mapstruddemo.dto;
+package com.example.mapstruddemo.service;
 
-import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 
+public interface FileService {
 
-@Getter
-@Setter
-@ToString
-public class FakeDto implements Serializable {
+  byte[] createCsv();
 
-
-  private String fullName;
-  private String zodico;
-  private String streetAddress;
+  ByteArrayInputStream createExcel();
 }
