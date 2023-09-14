@@ -30,12 +30,9 @@ package com.example.demomap.controller;
 
 
 
-import com.example.demomap.dto.CsvDto;
-import com.example.demomap.dto.DataExcelDto;
-import com.example.demomap.dto.PaginationDto;
-import com.example.demomap.dto.ProductosDto;
-import com.example.demomap.dto.ReqresResponseDto;
-import com.example.demomap.service.ClientesHttpService;
+import com.example.demomap.dto.*;
+import com.example.demomap.service.PlatziHttpService;
+import com.example.demomap.service.ReqresHttpService;
 import com.example.demomap.service.FileService;
 import com.example.demomap.service.ProductosService;
 import java.util.List;
@@ -49,12 +46,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -68,7 +60,10 @@ public class DemoController {
   private FileService fileService;
 
   @Autowired
-  private ClientesHttpService clientesHttpService;
+  private ReqresHttpService clientesHttpService;
+
+  @Autowired
+  private PlatziHttpService platziHttpService;
 
   @GetMapping(value = "/producto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ProductosDto> getProductoById(@PathVariable("id") Integer id) {
@@ -110,11 +105,21 @@ public class DemoController {
             .body(new InputStreamResource(fileService.createExcel()));
   }
 
-  @GetMapping(value = "/mono/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-  public ResponseEntity<ReqresResponseDto> getService(@PathVariable("id") Integer id) {
-    System.out.println("pasando");
+  @GetMapping(value = "reqres/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<ReqresResponseDto> getServiceReqres(@PathVariable("id") Integer id) {
     return ResponseEntity.ok(clientesHttpService.consumirServicio(id));
   }
+
+  @GetMapping(value = "/platzi/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<UserPlatziDto> getUserPlatzi(@PathVariable("id") Integer id) {
+    return ResponseEntity.ok(platziHttpService.getUserById(id));
+  }
+
+  @PostMapping(value = "/platzi/user", produces = MediaType.APPLICATION_JSON_VALUE)
+  public ResponseEntity<UserPlatziDto> saveUserPlatzi(@RequestBody PlatziCreateUserDto userDto) {
+    return ResponseEntity.ok(platziHttpService.save(userDto));
+  }
+
 
 
   @PostMapping(value = "/file", produces = MediaType.APPLICATION_JSON_VALUE)

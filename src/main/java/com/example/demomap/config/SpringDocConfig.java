@@ -34,7 +34,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class SpringDocConfig {
@@ -47,23 +46,19 @@ public class SpringDocConfig {
   @Bean
   public OpenAPI apiInfo() {
     return new OpenAPI()
-            .info(new Info()
-                    .title("demo")
-                    .description("Java application")
-                    .version("V 1.0")
-                    .license(
-                            new License()
-                                    .name("Apache License Version 2.0")
-                                    .url("https://www.apache.org/licenses/LICENSE-2.0"))
-                    .contact(new Contact()
-                            .name("test.com")
-                            .url("https://www.test.com/")
-                            .email("test@test.com")));
+              .info(new Info()
+                        .title("demo")
+                        .description("Java application")
+                        .version("V 1.0")
+                        .license(
+                                  new License()
+                                            .name("Apache License Version 2.0")
+                                            .url("https://www.apache.org/licenses/LICENSE-2.0"))
+                        .contact(new Contact()
+                                  .name("test.com")
+                                  .url("https://www.test.com/")
+                                  .email("test@test.com")));
   }
 
-  @Bean
-  public WebClient webClient() {
-    return WebClient.builder().build();
-  }
 
 }

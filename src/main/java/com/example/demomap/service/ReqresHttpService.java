@@ -28,9 +28,8 @@
 package com.example.demomap.service;
 
 import com.example.demomap.dto.ReqresResponseDto;
-import reactor.core.publisher.Mono;
 
-public interface ClientesHttpService {
+public interface ReqresHttpService {
 
   ReqresResponseDto consumirServicio(Integer id);
 }

@@ -29,32 +29,33 @@ package com.example.demomap.service;
 
 
 import com.example.demomap.dto.ReqresResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Service
 @Log4j2
-public class ClientesHttpServiceImpl implements ClientesHttpService {
+public class ReqresHttpServiceImpl implements ReqresHttpService {
 
-  private final  WebClient client;
+  private  WebClient client;
 
-  public ClientesHttpServiceImpl(WebClient.Builder client, @Value("${url-reqres}") String url){
-    this.client = client.baseUrl(url).build();
+  @Autowired
+  public ReqresHttpServiceImpl(@Qualifier("reqresWebClient") WebClient client) {
+    this.client = client;
   }
 
   @Override
   public ReqresResponseDto consumirServicio(Integer id) {
-    log.info("test");
     return client
             .get()
-            //.uri(uriBuilder -> uriBuilder.path("/users/{id}").build(id))
-            .uri(uriBuilder -> uriBuilder.path("/users/2").build())
-            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .uri(uriBuilder -> uriBuilder.path("/users/{id}").build(id))
+              .accept(MediaType.APPLICATION_JSON)
+              .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .retrieve()
             .bodyToMono(ReqresResponseDto.class).block();
 

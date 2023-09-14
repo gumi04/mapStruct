@@ -26,46 +26,22 @@
  */
 package com.example.demomap.controller;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.example.demomap.dto.CsvDto;
-import com.example.demomap.dto.DataExcelDto;
-import com.example.demomap.dto.DataReqrestDto;
-import com.example.demomap.dto.ErrorMessageDefaultDto;
-import com.example.demomap.dto.FakeDto;
-import com.example.demomap.dto.PaginationDto;
-import com.example.demomap.dto.ProductosDto;
-import com.example.demomap.dto.ReqresResponseDto;
-import com.example.demomap.dto.SupportReqrestDto;
+import com.example.demomap.dto.*;
 import com.example.demomap.entity.Categoria;
 import com.example.demomap.entity.Productos;
 import com.example.demomap.exceptions.BusinessRuleException;
 import com.example.demomap.repository.ProductosRepositorio;
-import com.example.demomap.service.ClientesHttpService;
-import com.example.demomap.service.ClientesHttpServiceImpl;
+import com.example.demomap.service.ReqresHttpService;
 import com.example.demomap.service.RandoFakeService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -79,52 +55,57 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.reactive.function.client.WebClient;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureWireMock(port = 0)
 @AutoConfigureMockMvc
 @Slf4j
+@ActiveProfiles("test")
 class DemoControllerTest {
 
   @MockBean
   private ProductosRepositorio productosRepositorio;
   @MockBean
   private RandoFakeService randoFakeService;
-  private static MockWebServer mockBackEnd;
-  private ClientesHttpService clientesHttpService;
+  @Autowired
+  private ReqresHttpService clientesHttpService;
 
-
-  /**
-   * The mvc.
-   */
   @Autowired
   private MockMvc mvc;
 
-  /**
-   * The Mapper.
-   */
+
+  private static MockWebServer mockWebServer;
+  ;
+
   private ObjectMapper mapper = new ObjectMapper();
 
-  @BeforeEach
-  public void setup() {
-    mockBackEnd = new MockWebServer();
-    this.clientesHttpService = new ClientesHttpServiceImpl(WebClient.builder(), mockBackEnd.url("/").toString());
-  }
-
   @BeforeAll
-  static void setUp() throws IOException {
-    mockBackEnd = new MockWebServer();
-    mockBackEnd.start(9090);
+  static void setup() throws IOException {
+    mockWebServer = new MockWebServer();
+    mockWebServer.start(9999);
   }
 
   @AfterAll
   static void tearDown() throws IOException {
-    mockBackEnd.shutdown();
+    mockWebServer.shutdown();
   }
 
   @Test
@@ -145,12 +126,12 @@ class DemoControllerTest {
     Mockito.when(productosRepositorio.findById(ArgumentMatchers.anyInt())).thenReturn(productoDb);
 
     MvcResult result = mvc.perform(get("/api/producto/1")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isOk())
+              .andReturn();
 
     ProductosDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ProductosDto.class);
+              ProductosDto.class);
 
     assertEquals(Integer.parseInt(responseController.getId()), producto.getId());
     assertEquals(responseController.getNombre(), producto.getName());
@@ -163,12 +144,12 @@ class DemoControllerTest {
     Mockito.when(productosRepositorio.findById(ArgumentMatchers.anyInt())).thenReturn(Optional.empty());
 
     MvcResult result = mvc.perform(get("/api/producto/1")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
     assertEquals(responseController.getStatus(), "FAILED");
     assertEquals(responseController.getMessage(), "A business error occurred -> Product not found.");
@@ -201,12 +182,12 @@ class DemoControllerTest {
     Mockito.when(productosRepositorio.paginationProducts(ArgumentMatchers.any())).thenReturn(productosPage);
 
     MvcResult result = mvc.perform(get("/api/producto")
-                    .queryParam("page", "0")
-                    .queryParam("size", "2")
-                    .queryParam("sort", "id")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .queryParam("page", "0")
+                        .queryParam("size", "2")
+                        .queryParam("sort", "id")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isOk())
+              .andReturn();
 
     PaginationDto responseController = mapper.readValue(result.getResponse().getContentAsString(), PaginationDto.class);
 
@@ -235,9 +216,9 @@ class DemoControllerTest {
     Mockito.when(productosRepositorio.findAll()).thenReturn(productosList);
 
     MvcResult result = mvc.perform(get("/api/csv")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isOk())
+              .andReturn();
 
     //String response = "id,nombre,fecha\n1,name,2023-09-11";
 
@@ -252,12 +233,12 @@ class DemoControllerTest {
     Mockito.when(productosRepositorio.findAll()).thenThrow(new BusinessRuleException("fallo"));
 
     MvcResult result = mvc.perform(get("/api/csv")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
     assertEquals("FAILED", responseController.getStatus());
     assertEquals("A business error occurred -> Error al crear el libro csv A business error occurred -> fallo..", responseController.getMessage());
@@ -276,9 +257,9 @@ class DemoControllerTest {
     Mockito.when(randoFakeService.getDummyData()).thenReturn(dataList);
 
     MvcResult result = mvc.perform(get("/api/excel")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isOk())
+              .andReturn();
 
     //String response = "id,nombre,fecha\n1,name,2023-09-11";
 
@@ -291,14 +272,14 @@ class DemoControllerTest {
     Mockito.when(randoFakeService.getDummyData()).thenThrow(new BusinessRuleException("fallo"));
 
     MvcResult result = mvc.perform(get("/api/excel")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
     //String response = "id,nombre,fecha\n1,name,2023-09-11";
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
     assertEquals("FAILED", responseController.getStatus());
     assertEquals("A business error occurred -> Error al crear el libro de excel A business error occurred -> fallo..", responseController.getMessage());
@@ -309,19 +290,19 @@ class DemoControllerTest {
     mapper.registerModule(new JavaTimeModule());
 
     Path path = Paths.get("src/test/java/resources/esquema.json");
-    byte[] archivo = Files.readAllBytes(path);
+    byte[] archivo = IOUtils.toByteArray(this.getClass().getResourceAsStream("/files/esquema.json"));
 
     //Cargamos el archivo
-    MockMultipartFile mockMultipartFile = new MockMultipartFile("esquema.json","", "application/json", archivo);
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("esquema.json", "", "application/json", archivo);
 
     MvcResult result = mvc.perform(multipart("/api/file")
-            .file("file", mockMultipartFile.getBytes())
-            .characterEncoding("UTF-8"))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .file("file", mockMultipartFile.getBytes())
+                        .characterEncoding("UTF-8"))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
 
     assertEquals("FAILED", responseController.getStatus());
@@ -331,20 +312,19 @@ class DemoControllerTest {
   @Test
   void loadFileOk() throws Exception {
     mapper.registerModule(new JavaTimeModule());
-
-    Path path = Paths.get("src/test/java/resources/archivo-test.csv");
-    byte[] archivo = Files.readAllBytes(path);
+    byte[] archivo = IOUtils.toByteArray(this.getClass().getResourceAsStream("/files/archivo-test.csv"));
 
     //Cargamos el archivo
-    MockMultipartFile mockMultipartFile = new MockMultipartFile("file","archivo-test.csv", "text/csv", archivo);
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "archivo-test.csv", "text/csv", archivo);
 
     MvcResult result = mvc.perform(multipart("/api/file")
-                    .file(mockMultipartFile)
-                    .characterEncoding("UTF-8"))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .file(mockMultipartFile)
+                        .characterEncoding("UTF-8"))
+              .andExpect(status().isOk())
+              .andReturn();
 
-    List<CsvDto> dataController = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<CsvDto>>() {});
+    List<CsvDto> dataController = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<CsvDto>>() {
+    });
 
     assertEquals(1, dataController.size());
     assertEquals(1, dataController.get(0).getId());
@@ -354,21 +334,20 @@ class DemoControllerTest {
   void loadFileBad() throws Exception {
     mapper.registerModule(new JavaTimeModule());
 
-    Path path = Paths.get("src/test/java/resources/archivo-testBadDates.csv");
-    byte[] archivo = Files.readAllBytes(path);
+    byte[] archivo = IOUtils.toByteArray(this.getClass().getResourceAsStream("/files/archivo-testBadDates.csv"));
 
     //Cargamos el archivo
-    MockMultipartFile mockMultipartFile = new MockMultipartFile("file","archivo-test.csv", "text/csv", archivo);
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "archivo-test.csv", "text/csv", archivo);
 
     MvcResult result = mvc.perform(multipart("/api/file")
-                    .file(mockMultipartFile)
-                    .characterEncoding("UTF-8"))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .file(mockMultipartFile)
+                        .characterEncoding("UTF-8"))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
     assertEquals("FAILED", responseController.getStatus());
     assertEquals("A business error occurred -> Error al leer libro java.time.format.DateTimeParseException: Text '25/03/2023' could not be parsed at index 0.", responseController.getMessage());
@@ -378,20 +357,19 @@ class DemoControllerTest {
   void loadFileExBadExtension() throws Exception {
     mapper.registerModule(new JavaTimeModule());
 
-    Path path = Paths.get("src/test/java/resources/esquema.json");
-    byte[] archivo = Files.readAllBytes(path);
+    byte[] archivo = IOUtils.toByteArray(this.getClass().getResourceAsStream("/files/esquema.json"));
 
     //Cargamos el archivo
-    MockMultipartFile mockMultipartFile = new MockMultipartFile("file","esquema.json", "application/json", archivo);
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "esquema.json", "application/json", archivo);
 
     MvcResult result = mvc.perform(multipart("/api/fileEx")
-                    .file("file", mockMultipartFile.getBytes())
-                    .characterEncoding("UTF-8"))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .file("file", mockMultipartFile.getBytes())
+                        .characterEncoding("UTF-8"))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
     assertEquals("FAILED", responseController.getStatus());
     assertEquals("A business error occurred -> El archivo no puede ser procesado.", responseController.getMessage());
@@ -401,19 +379,19 @@ class DemoControllerTest {
   void loadFileExOk() throws Exception {
     mapper.registerModule(new JavaTimeModule());
 
-    Path path = Paths.get("src/test/java/resources/test-ok.xlsx");
-    byte[] archivo = Files.readAllBytes(path);
+    byte[] archivo = IOUtils.toByteArray(this.getClass().getResourceAsStream("/files/test-ok.xlsx"));
 
     //Cargamos el archivo
-    MockMultipartFile mockMultipartFile = new MockMultipartFile("file","test-ok.xlsx", "application/vnd.ms-excel", archivo);
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "test-ok.xlsx", "application/vnd.ms-excel", archivo);
 
     MvcResult result = mvc.perform(multipart("/api/fileEx")
-                    .file(mockMultipartFile)
-                    .characterEncoding("UTF-8"))
-            .andExpect(status().isOk())
-            .andReturn();
+                        .file(mockMultipartFile)
+                        .characterEncoding("UTF-8"))
+              .andExpect(status().isOk())
+              .andReturn();
 
-    List<DataExcelDto> dataController = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<DataExcelDto>>() {});
+    List<DataExcelDto> dataController = mapper.readValue(result.getResponse().getContentAsString(), new TypeReference<List<DataExcelDto>>() {
+    });
 
     assertEquals(1, dataController.size());
     assertEquals("Phillip Hodkiewicz", dataController.get(0).getFullName());
@@ -424,21 +402,19 @@ class DemoControllerTest {
   @Test
   void loadFileExBad() throws Exception {
     mapper.registerModule(new JavaTimeModule());
-
-    Path path = Paths.get("src/test/java/resources/archivo.xlsx");
-    byte[] archivo = Files.readAllBytes(path);
+    byte[] archivo = IOUtils.toByteArray(this.getClass().getResourceAsStream("/files/archivo.xlsx"));
 
     //Cargamos el archivo
-    MockMultipartFile mockMultipartFile = new MockMultipartFile("file","archivo.xlsx", "application/vnd.ms-excel", archivo);
+    MockMultipartFile mockMultipartFile = new MockMultipartFile("file", "archivo.xlsx", "application/vnd.ms-excel", archivo);
 
     MvcResult result = mvc.perform(multipart("/api/fileEx")
-                    .file(mockMultipartFile)
-                    .characterEncoding("UTF-8"))
-            .andExpect(status().isInternalServerError())
-            .andReturn();
+                        .file(mockMultipartFile)
+                        .characterEncoding("UTF-8"))
+              .andExpect(status().isInternalServerError())
+              .andReturn();
 
     ErrorMessageDefaultDto responseController = mapper.readValue(result.getResponse().getContentAsString(),
-            ErrorMessageDefaultDto.class);
+              ErrorMessageDefaultDto.class);
 
     assertEquals("FAILED", responseController.getStatus());
     assertEquals("A business error occurred -> o se puede leer el libro Cannot get a NUMERIC value from a STRING cell.", responseController.getMessage());
@@ -447,44 +423,106 @@ class DemoControllerTest {
   @Test
   void getUuid() throws Exception {
     MvcResult result = mvc.perform(get("/api/uuid")
-                    .contentType(MediaType.TEXT_PLAIN_VALUE))
-            .andExpect(status().isOk()).andReturn();
+                        .contentType(MediaType.TEXT_PLAIN_VALUE))
+              .andExpect(status().isOk()).andReturn();
 
     String responseController = result.getResponse().getContentAsString();
     log.info(responseController);
     assertNotNull(responseController);
   }
 
+
   @Test
   void getService() throws Exception {
     ReqresResponseDto responeService = ReqresResponseDto
-            .builder()
-            .data(DataReqrestDto
-                    .builder()
-                    .id(2)
-                    .email("janet.weaver@reqres.in")
-                    .first_name("Janet")
-                    .last_name("Weaver")
-                    .avatar("https://reqres.in/img/faces/2-image.jpg")
-                    .build())
-            .support(SupportReqrestDto.builder()
-                    .url("https://reqres.in/#support-heading")
-                    .text("To keep ReqRes free, contributions towards server costs are appreciated!")
-                    .build())
-            .build();
+              .builder()
+              .data(DataReqrestDto
+                        .builder()
+                        .id(2)
+                        .email("janet.weaver@reqres.in")
+                        .first_name("gumaro")
+                        .last_name("Weaver")
+                        .avatar("https://reqres.in/img/faces/2-image.jpg")
+                        .build())
+              .support(SupportReqrestDto.builder()
+                        .url("https://reqres.in/#support-heading")
+                        .text("To keep ReqRes free, contributions towards server costs are appreciated!")
+                        .build())
+              .build();
 
-    mockBackEnd.enqueue(new MockResponse()
-            .setBody(mapper.writeValueAsString(responeService))
-            .addHeader("Content-Type", "application/json").setResponseCode(200));
+    mockWebServer.enqueue(new MockResponse()
+              .setBody(mapper.writeValueAsString(responeService))
+              .addHeader("Content-Type", "application/json").setResponseCode(200));
 
 
-    MvcResult result = mvc.perform(get("/api/mono/2")
-                    .contentType(MediaType.APPLICATION_JSON_VALUE))
-//            .andExpect(status().isNotFound())
-            .andReturn();
+    MvcResult result = mvc.perform(get("/api/reqres/user/1")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isOk())
+              .andReturn();
 
     log.info("Response de llamada al mock de servicio");
     log.info(result.getResponse().getContentAsString());
 
+  }
+
+  @Test
+  void getUserPlatzi() throws Exception {
+    mapper.registerModule(new JavaTimeModule());
+    UserPlatziDto responseService = new UserPlatziDto();
+    responseService.setAvatar("avatar");
+    responseService.setName("name");
+    responseService.setId(1);
+    responseService.setEmail("email");
+    responseService.setRole("role");
+    responseService.setPassword("password");
+    responseService.setCreationAt(LocalDateTime.now());
+    responseService.setUpdatedAt(LocalDateTime.now());
+
+
+    mockWebServer.enqueue(new MockResponse()
+              .setBody(mapper.writeValueAsString(responseService))
+              .addHeader("Content-Type", "application/json").setResponseCode(200));
+
+
+    MvcResult result = mvc.perform(get("/api/platzi/user/100")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+              .andExpect(status().isOk())
+              .andReturn();
+
+    log.info("RESPOSNE DE TEST ----------------------------");
+    log.info(result.getResponse().getContentAsString());
+  }
+
+  @Test
+  void saveUserPlatzi() throws Exception{
+    mapper.registerModule(new JavaTimeModule());
+    PlatziCreateUserDto user = new PlatziCreateUserDto();
+    user.setAvatar("avatar");
+    user.setEmail("email");
+    user.setPassword("password");
+    user.setName("name");
+
+    UserPlatziDto responseService = new UserPlatziDto();
+    responseService.setAvatar("avatar");
+    responseService.setName("name");
+    responseService.setId(1);
+    responseService.setEmail("email");
+    responseService.setRole("role");
+    responseService.setPassword("password");
+    responseService.setCreationAt(LocalDateTime.now());
+    responseService.setUpdatedAt(LocalDateTime.now());
+
+    mockWebServer.enqueue(new MockResponse()
+              .setBody(mapper.writeValueAsString(responseService))
+              .addHeader("Content-Type", "application/json").setResponseCode(200));
+
+    MvcResult result = mvc.perform(post("/api/platzi/user")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(mapper.writeValueAsBytes(user)))
+              .andExpect(status().isOk())
+              .andReturn();
+
+    log.info("RESPOSNE DE TEST ----------------------------");
+    log.info(result.getResponse().getContentAsString());
   }
 }
