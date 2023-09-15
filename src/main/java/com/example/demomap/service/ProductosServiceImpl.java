@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ProductosServiceImpl
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -40,12 +40,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/**
+ * The type Productos service.
+ */
 @Service
 public class ProductosServiceImpl implements ProductosService {
 
+  /**
+   * The Repositorio.
+   */
   @Autowired
   private ProductosRepositorio repositorio;
 
+  /**
+   * The Mapper.
+   */
   @Autowired
   private ProductsMapper mapper;
 

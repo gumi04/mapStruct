@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: InternalServerException
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -42,7 +42,6 @@ public class InternalServerException extends RuntimeException {
    * Instantiates a new Internal server exception.
    *
    * @param message the message of the exception
-   *
    */
   public InternalServerException(final String message) {
     super("An error occurred during the process -> " + message + ".");

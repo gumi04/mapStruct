@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: SupportReqrestDt
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 13, 2023
  */
 
@@ -32,11 +32,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Support reqrest dto.
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SupportReqrestDto {
+  /**
+   * The Url.
+   */
   private String url;
+  /**
+   * The Text.
+   */
   private String text;
 }

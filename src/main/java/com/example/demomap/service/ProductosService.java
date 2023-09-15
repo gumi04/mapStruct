@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ProductosService
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -32,11 +32,31 @@ import com.example.demomap.dto.ProductosDto;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 
+/**
+ * The interface Productos service.
+ */
 public interface ProductosService {
 
+  /**
+   * Gets produc by id.
+   *
+   * @param id the id
+   * @return the produc by id
+   */
   ProductosDto getProducById(Integer id);
 
+  /**
+   * Pagination pagination dto.
+   *
+   * @param pageable the pageable
+   * @return the pagination dto
+   */
   PaginationDto pagination(Pageable pageable);
 
+  /**
+   * Gets all products.
+   *
+   * @return the all products
+   */
   List<ProductosDto> getAllProducts();
 }

@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: FileServiceImpl
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 11, 2023
  */
 
@@ -58,17 +58,32 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * The type File service.
+ */
 @Log4j2
 @Service
 public class FileServiceImpl implements FileService {
 
 
+  /**
+   * The Rando fake service.
+   */
   @Autowired
   private RandoFakeService randoFakeService;
+  /**
+   * The Productos service.
+   */
   @Autowired
   private ProductosService productosService;
 
+  /**
+   * The Header excel.
+   */
   private List<String> headerExcel = Arrays.asList("Nombre", "Direccion", "Zodiaco");
+  /**
+   * The Header csv.
+   */
   private List<String> headerCSV = Arrays.asList("id", "nombre", "fecha");
 
   @Override
@@ -174,6 +189,12 @@ public class FileServiceImpl implements FileService {
     }
   }
 
+  /**
+   * Create header sheet.
+   *
+   * @param sheet the sheet
+   * @return the sheet
+   */
   private Sheet createHeader(Sheet sheet) {
     Row row = sheet.createRow(0);
     for (int i = 0; i < headerExcel.size(); i++) {
@@ -183,6 +204,13 @@ public class FileServiceImpl implements FileService {
     return sheet;
   }
 
+  /**
+   * Process data sheet.
+   *
+   * @param sheet    the sheet
+   * @param dataList the data list
+   * @return the sheet
+   */
   private Sheet processData(Sheet sheet, List<FakeDto> dataList) {
     Integer count = 1;
     for (FakeDto item : dataList) {
@@ -193,6 +221,14 @@ public class FileServiceImpl implements FileService {
     return sheet;
   }
 
+  /**
+   * Write data sheet.
+   *
+   * @param sheet the sheet
+   * @param row   the row
+   * @param data  the data
+   * @return the sheet
+   */
   private Sheet writeData(Sheet sheet, Row row, FakeDto data) {
     Cell cell;
     cell = row.createCell(0);

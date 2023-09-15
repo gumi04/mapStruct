@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: fake
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -33,13 +33,25 @@ import lombok.Setter;
 import lombok.ToString;
 
 
+/**
+ * The type Fake dto.
+ */
 @Getter
 @Setter
 @ToString
 public class FakeDto implements Serializable {
 
 
+  /**
+   * The Full name.
+   */
   private String fullName;
+  /**
+   * The Zodico.
+   */
   private String zodico;
+  /**
+   * The Street address.
+   */
   private String streetAddress;
 }

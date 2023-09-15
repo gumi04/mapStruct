@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ErrorMessageDefaultDto
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -54,6 +54,9 @@ public class ErrorMessageDefaultDto {
    */
   private String message;
 
+  /**
+   * The Date time.
+   */
   private LocalDateTime dateTime;
 
   /**

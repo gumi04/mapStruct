@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: CsvDto
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 12, 2023
  */
 
@@ -33,15 +33,26 @@ import com.opencsv.bean.CsvCustomBindByPosition;
 import java.time.LocalDate;
 import lombok.Data;
 
-;
 
+/**
+ * The type Csv dto.
+ */
 @Data
 public class CsvDto {
 
+  /**
+   * The Id.
+   */
   @CsvBindByPosition(position = 0)
   private Integer id;
+  /**
+   * The Nombre.
+   */
   @CsvBindByPosition(position = 1)
   private String nombre;
+  /**
+   * The Fecha.
+   */
   @CsvCustomBindByPosition(position = 2, converter = LocalDatetimeConverter.class)
   private LocalDate fecha;
 }

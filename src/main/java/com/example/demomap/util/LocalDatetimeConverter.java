@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: LocalDatetimeConverter
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 12, 2023
  */
 
@@ -36,6 +36,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Local datetime converter.
+ */
 @NoArgsConstructor
 public class LocalDatetimeConverter extends AbstractBeanField<String, LocalDateTime> {
 

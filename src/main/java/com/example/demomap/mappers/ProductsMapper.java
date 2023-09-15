@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ProductsMapper
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -35,22 +35,49 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
+/**
+ * The interface Products mapper.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         uses = {CategoriaMapper.class})
 public interface ProductsMapper {
 
 
+  /**
+   * To dto productos dto.
+   *
+   * @param entity the entity
+   * @return the productos dto
+   */
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "nombre")
   @Mapping(source = "date", target = "fecha", dateFormat = "yyyy-MM-dd")
   ProductosDto toDto(Productos entity);
 
+  /**
+   * To entity productos.
+   *
+   * @param dto the dto
+   * @return the productos
+   */
   @InheritInverseConfiguration
   Productos toEntity(ProductosDto dto);
 
 
+  /**
+   * Toget dtos list list.
+   *
+   * @param entityList the entity list
+   * @return the list
+   */
   List<ProductosDto> togetDtosList(List<Productos> entityList);
 
+  /**
+   * Toget entity list list.
+   *
+   * @param dtoList the dto list
+   * @return the list
+   */
   List<Productos> togetEntityList(List<ProductosDto> dtoList);
 
 

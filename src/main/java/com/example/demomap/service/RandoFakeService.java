@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: RandoFakeService
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -30,7 +30,15 @@ package com.example.demomap.service;
 import com.example.demomap.dto.FakeDto;
 import java.util.List;
 
+/**
+ * The interface Rando fake service.
+ */
 public interface RandoFakeService {
 
+  /**
+   * Gets dummy data.
+   *
+   * @return the dummy data
+   */
   List<FakeDto> getDummyData();
 }

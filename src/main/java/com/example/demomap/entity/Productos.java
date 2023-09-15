@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: Productos
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -37,6 +37,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+/**
+ * The type Productos.
+ */
 @Getter
 @Setter
 
@@ -44,13 +47,25 @@ import lombok.Setter;
 @Table(name = "Productos")
 public class Productos {
 
+  /**
+   * The Id.
+   */
   @Id
   private Integer id;
 
+  /**
+   * The Name.
+   */
   private String name;
 
+  /**
+   * The Date.
+   */
   private LocalDateTime date;
 
+  /**
+   * The Categoria.
+   */
   @ManyToOne
   @JoinColumn(name = "categorie_id")
   private Categoria categoria;

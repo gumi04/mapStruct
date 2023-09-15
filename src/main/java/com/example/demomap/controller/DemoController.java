@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: DemoController
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -49,27 +49,55 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * The type Demo controller.
+ */
 @RestController
 @RequestMapping("/api")
 public class DemoController {
 
+  /**
+   * The Service.
+   */
   @Autowired
   private ProductosService service;
 
+  /**
+   * The File service.
+   */
   @Autowired
   private FileService fileService;
 
+  /**
+   * The Clientes http service.
+   */
   @Autowired
   private ReqresHttpService clientesHttpService;
 
+  /**
+   * The Platzi http service.
+   */
   @Autowired
   private PlatziHttpService platziHttpService;
 
+  /**
+   * Gets producto by id.
+   *
+   * @param id the id
+   * @return the producto by id
+   */
   @GetMapping(value = "/producto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ProductosDto> getProductoById(@PathVariable("id") Integer id) {
     return ResponseEntity.ok(service.getProducById(id));
   }
 
+
+  /**
+   * Gets producto by id.
+   *
+   * @param pageable the pageable
+   * @return the producto by id
+   */
   @GetMapping(value = "/producto", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<PaginationDto> getProductoById(@PageableDefault(size = 10, page = 0, sort = {"id",}, direction = Sort.Direction.DESC) Pageable pageable) {
     return ResponseEntity.ok(service.pagination(pageable));
@@ -84,6 +112,11 @@ public class DemoController {
 //    return ResponseEntity.ok(service.pagination(pageable));
 //  }
 
+  /**
+   * Gets fake data.
+   *
+   * @return the fake data
+   */
   @GetMapping(value = "/csv", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public ResponseEntity<byte[]> getFakeData() {
     return ResponseEntity
@@ -94,6 +127,11 @@ public class DemoController {
             .body(fileService.createCsv());
   }
 
+  /**
+   * Gets fake data excel.
+   *
+   * @return the fake data excel
+   */
   @GetMapping(value = "/excel", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
   public ResponseEntity<InputStreamResource> getFakeDataExcel() {
 
@@ -105,33 +143,67 @@ public class DemoController {
             .body(new InputStreamResource(fileService.createExcel()));
   }
 
+  /**
+   * Gets service reqres.
+   *
+   * @param id the id
+   * @return the service reqres
+   */
   @GetMapping(value = "reqres/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<ReqresResponseDto> getServiceReqres(@PathVariable("id") Integer id) {
     return ResponseEntity.ok(clientesHttpService.consumirServicio(id));
   }
 
+  /**
+   * Gets user platzi.
+   *
+   * @param id the id
+   * @return the user platzi
+   */
   @GetMapping(value = "/platzi/user/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserPlatziDto> getUserPlatzi(@PathVariable("id") Integer id) {
     return ResponseEntity.ok(platziHttpService.getUserById(id));
   }
 
+  /**
+   * Save user platzi response entity.
+   *
+   * @param userDto the user dto
+   * @return the response entity
+   */
   @PostMapping(value = "/platzi/user", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<UserPlatziDto> saveUserPlatzi(@RequestBody PlatziCreateUserDto userDto) {
     return ResponseEntity.ok(platziHttpService.save(userDto));
   }
 
 
-
+  /**
+   * Load file response entity.
+   *
+   * @param file the file
+   * @return the response entity
+   */
   @PostMapping(value = "/file", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<CsvDto>> loadFile(@RequestParam(value = "file") MultipartFile file) {
     return ResponseEntity.ok(fileService.readCsv(file));
   }
 
+  /**
+   * Load file ex response entity.
+   *
+   * @param file the file
+   * @return the response entity
+   */
   @PostMapping(value = "/fileEx", produces = MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<List<DataExcelDto>> loadFileEx(@RequestParam(value = "file") MultipartFile file) {
     return ResponseEntity.ok(fileService.readExcel(file));
   }
 
+  /**
+   * Gets uuid.
+   *
+   * @return the uuid
+   */
   @GetMapping(value = "/uuid", produces = MediaType.TEXT_PLAIN_VALUE)
   public ResponseEntity<String> getUuid() {
 

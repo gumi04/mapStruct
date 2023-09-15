@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: CategoriaDto
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -30,12 +30,24 @@ package com.example.demomap.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The type Categoria dto.
+ */
 @Getter
 @Setter
 public class CategoriaDto {
 
+  /**
+   * The Id.
+   */
   private Integer id;
+  /**
+   * The Name.
+   */
   private String name;
+  /**
+   * The Status.
+   */
   private boolean status;
 
 }

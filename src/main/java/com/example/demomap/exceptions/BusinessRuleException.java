@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: BusinessRuleException
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 

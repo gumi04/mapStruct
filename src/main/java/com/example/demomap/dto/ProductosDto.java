@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ProductosDto
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -30,13 +30,28 @@ package com.example.demomap.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The type Productos dto.
+ */
 @Getter
 @Setter
 public class ProductosDto {
 
+  /**
+   * The Id.
+   */
   private String id;
+  /**
+   * The Nombre.
+   */
   private String nombre;
+  /**
+   * The Fecha.
+   */
   private String fecha;
+  /**
+   * The Categoria.
+   */
   private CategoriaDto categoria;
 
 }

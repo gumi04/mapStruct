@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ProductosRepositorio
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -35,11 +35,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+/**
+ * The interface Productos repositorio.
+ */
 @Repository
 public interface ProductosRepositorio extends JpaRepository<Productos, Integer> {
 
   Optional<Productos> findById(Integer id);
 
+  /**
+   * Pagination products page.
+   *
+   * @param pageable the pageable
+   * @return the page
+   */
   @Query(value = "SELECT p.id, p.name, p.date, p.categorie_id FROM Productos p",
           countQuery = "SELECT COUNT (*) FROM Productos p", nativeQuery = true)
   Page<Productos> paginationProducts(Pageable pageable);

@@ -52,7 +52,13 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @ControllerAdvice
 public class ExceptionHandlerController {
 
+  /**
+   * The constant LOGGER.
+   */
   private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerController.class);
+  /**
+   * The constant MESSAGE_FAILED.
+   */
   private static final String MESSAGE_FAILED = "FAILED";
 
   /**
@@ -160,6 +166,7 @@ public class ExceptionHandlerController {
   /**
    * Forbidden request error exception.
    *
+   * @param exception the exception
    * @return The ErrorMessageDefault dto with the error details
    */
   @ResponseStatus(HttpStatus.FORBIDDEN)

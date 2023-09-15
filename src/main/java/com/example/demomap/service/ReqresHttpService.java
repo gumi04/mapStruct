@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ClientesHttpService
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 11, 2023
  */
 
@@ -29,7 +29,16 @@ package com.example.demomap.service;
 
 import com.example.demomap.dto.ReqresResponseDto;
 
+/**
+ * The interface Reqres http service.
+ */
 public interface ReqresHttpService {
 
+  /**
+   * Consumir servicio reqres response dto.
+   *
+   * @param id the id
+   * @return the reqres response dto
+   */
   ReqresResponseDto consumirServicio(Integer id);
 }

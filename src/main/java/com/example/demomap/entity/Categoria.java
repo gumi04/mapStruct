@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: Categoria
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -33,16 +33,28 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * The type Categoria.
+ */
 @Getter
 @Setter
 @Entity
 @Table(name = "Categoria")
 public class Categoria {
 
+  /**
+   * The Id.
+   */
   @Id
   private Integer id;
 
+  /**
+   * The Nombre.
+   */
   private String nombre;
 
+  /**
+   * The Estatus.
+   */
   private boolean estatus;
 }

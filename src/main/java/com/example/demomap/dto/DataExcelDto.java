@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: DataExcelDto
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 12, 2023
  */
 
@@ -32,13 +32,28 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * The type Data excel dto.
+ */
 @Getter
 @Setter
 @ToString
 public class DataExcelDto {
 
+  /**
+   * The Full name.
+   */
   private String fullName;
+  /**
+   * The Zodico.
+   */
   private String zodico;
+  /**
+   * The Street address.
+   */
   private String streetAddress;
+  /**
+   * The Fecha.
+   */
   private LocalDate fecha;
 }

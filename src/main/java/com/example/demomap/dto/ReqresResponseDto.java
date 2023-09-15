@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ReqresResponse
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 13, 2023
  */
 
@@ -32,11 +32,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * The type Reqres response dto.
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReqresResponseDto {
+  /**
+   * The Data.
+   */
   private DataReqrestDto data;
+  /**
+   * The Support.
+   */
   private SupportReqrestDto support;
 }

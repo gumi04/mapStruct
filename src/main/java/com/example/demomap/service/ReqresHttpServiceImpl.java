@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: ClientesHttpServiceImpl
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 11, 2023
  */
 
@@ -29,7 +29,6 @@ package com.example.demomap.service;
 
 
 import com.example.demomap.dto.ReqresResponseDto;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,12 +37,23 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * The type Reqres http service.
+ */
 @Service
 @Log4j2
 public class ReqresHttpServiceImpl implements ReqresHttpService {
 
-  private  WebClient client;
+  /**
+   * The Client.
+   */
+  private WebClient client;
 
+  /**
+   * Instantiates a new Reqres http service.
+   *
+   * @param client the client
+   */
   @Autowired
   public ReqresHttpServiceImpl(@Qualifier("reqresWebClient") WebClient client) {
     this.client = client;
@@ -54,8 +64,8 @@ public class ReqresHttpServiceImpl implements ReqresHttpService {
     return client
             .get()
             .uri(uriBuilder -> uriBuilder.path("/users/{id}").build(id))
-              .accept(MediaType.APPLICATION_JSON)
-              .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .retrieve()
             .bodyToMono(ReqresResponseDto.class).block();
 

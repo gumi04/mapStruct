@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: CategoriaMapper
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 08, 2023
  */
 
@@ -35,20 +35,47 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
+/**
+ * The interface Categoria mapper.
+ */
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CategoriaMapper {
 
 
+  /**
+   * To dto categoria dto.
+   *
+   * @param categoria the categoria
+   * @return the categoria dto
+   */
   @Mapping(source = "id", target = "id")
   @Mapping(source = "nombre", target = "name")
   @Mapping(source = "estatus", target = "status")
   CategoriaDto toDto(Categoria categoria);
 
+  /**
+   * To entity categoria.
+   *
+   * @param dto the dto
+   * @return the categoria
+   */
   @InheritInverseConfiguration
   Categoria toEntity(CategoriaDto dto);
 
 
+  /**
+   * To dto list list.
+   *
+   * @param categoriaList the categoria list
+   * @return the list
+   */
   List<CategoriaDto> toDtoList(List<Categoria> categoriaList);
 
+  /**
+   * To enttity list list.
+   *
+   * @param dtoList the dto list
+   * @return the list
+   */
   List<Categoria> toEnttityList(List<CategoriaDto> dtoList);
 }

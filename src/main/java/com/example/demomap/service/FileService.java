@@ -21,7 +21,7 @@
  * your programs, too.
  *
  * Nombre de archivo: FileService
- * Autor: 319207
+ * Autor: anonimo
  * Fecha de creación: septiembre 11, 2023
  */
 
@@ -33,14 +33,39 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
+/**
+ * The interface File service.
+ */
 public interface FileService {
 
+  /**
+   * Create csv byte [ ].
+   *
+   * @return the byte [ ]
+   */
   byte[] createCsv();
 
+  /**
+   * Create excel byte array input stream.
+   *
+   * @return the byte array input stream
+   */
   ByteArrayInputStream createExcel();
 
 
+  /**
+   * Read csv list.
+   *
+   * @param file the file
+   * @return the list
+   */
   List<CsvDto> readCsv(MultipartFile file);
 
+  /**
+   * Read excel list.
+   *
+   * @param file the file
+   * @return the list
+   */
   List<DataExcelDto> readExcel(MultipartFile file);
 }
